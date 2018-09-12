@@ -11,7 +11,7 @@ GUISetOnEvent($GUI_EVENT_CLOSE, "guiClose")
 ;;;;;;;;;;;;;;;
 ;;; GUI Control
 ;;;;;;;;;;;;;;;
-createGroupRGB(0,0,200,120)
+createGroupRGB(0, 0, 200, 120)
 
 ;;;;;;;;;;;;;;;
 GUISetState(@SW_SHOW, $hGui)
