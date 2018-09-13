@@ -15,7 +15,7 @@ GUISetOnEvent($GUI_EVENT_CLOSE, "guiClose")
 ;;; GUI Control
 ;;;;;;;;;;;;;;;
 createGroupRGB(0, 0, 200, 120)
-createCursorButton( 10, 200)
+createCursorButton(10, 200)
 
 ;;;;;;;;;;;;;;;
 GUISetState(@SW_SHOW, $hGui)
