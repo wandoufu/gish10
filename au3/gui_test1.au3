@@ -2,6 +2,8 @@
 #include <GUIConstantsEx.au3>
 #include "gui_rgb_group.au3"
 #include "gui_cursor_icon.au3"
+#include "gui_fishbuff.au3"
+
 Opt("GUIOnEventMode", 1) ; Change to OnEvent mode
 ;;;;;default GDI+ startup
 _GDIPlus_Startup()
@@ -14,8 +16,11 @@ GUISetOnEvent($GUI_EVENT_CLOSE, "guiClose")
 ;;;;;;;;;;;;;;;
 ;;; GUI Control
 ;;;;;;;;;;;;;;;
-createGroupRGB(0, 0, 200, 120)
-createCursorButton(10, 200)
+createGroupRGB(0, 0);, 200, 120)
+createCursorButton(10, 180)
+
+;fishbuff
+_fishbuff_Main(250, 30)
 
 ;;;;;;;;;;;;;;;
 GUISetState(@SW_SHOW, $hGui)
