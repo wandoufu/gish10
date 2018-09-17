@@ -8,6 +8,7 @@ Global Const $iWidth = 50, $iHeight = 50, $iX = 8, $iY = 3, $iWait = 500
 ;-50,-50 ~ +50,+50
 Global $hGUI, $hGraphics
 Global $running = 0, $x = 0, $y = 0
+Global $aPos, $_gid_info[$iX*$iY]
 
 Opt("GUIOnEventMode", 1) ; Change to OnEvent mode
 Opt('MustDeclareVars', 1) ; 变量必须被预先定义dim local global
@@ -27,6 +28,7 @@ Func Example()
 	GUISetState(@SW_SHOW)
 
 	$hGraphics = _GDIPlus_GraphicsCreateFromHWND($hGUI) ;create a graphics object from a window handle
+	createLabel()
 
 	While (1)
 		If $running = 1 Then saveMousePic()
@@ -53,8 +55,8 @@ Func toggleRunning()
 EndFunc   ;==>toggleRunning
 
 Func saveMousePic()
-	Local $aPos = MouseGetPos()
 	Local $x1, $y1, $x2, $y2
+	$aPos = MouseGetPos()
 	$x1 = $aPos[0] - $iWidth
 	If $x1 < 0 Then $x1 = 0
 	$y1 = $aPos[1] - $iHeight
@@ -77,6 +79,7 @@ Func saveMousePic()
 	_WinAPI_DeleteObject($hHBmp) ;release GDI bitmap resource because not needed anymore
 
 	_GDIPlus_GraphicsDrawImage($hGraphics, $hBitmap, $x * $iWidth * 2, $y * $iHeight * 2) ;copy negative bitmap to graphics object (GUI)
+	updateLable($x,$y)
 	$x += 1
 	If $x = $iX Then
 		$x = 0
@@ -87,3 +90,32 @@ Func saveMousePic()
 
 EndFunc   ;==>saveMousePic
 
+Func createLabel()
+	For $i = 0 To $iX-1
+		For $j = 0 To $iY-1
+			Local $id = $j*$iX + $i
+			$_gid_info[$id]=GUICtrlCreateLabel($id,$iWidth*$i*2, $iHeight*($j*2+2)-15, 100,15,-1,$WS_EX_TRANSPARENT)
+		Next
+	Next
+EndFunc
+
+Func updateLable($x,$y)
+	Local $pos
+	Local $id = $x + $y*$iX 
+	;active relative pos
+	Local $s = $aPos[0] & "x" & $aPos[1]	; default 1
+#cs
+	Opt('MouseCoordMode', 0)	;relative coords to the active window
+	$pos = MouseGetPos()
+	$s &= " " & $pos[0] & "x" & $pos[1]	; default 1
+#ce
+
+	Opt('MouseCoordMode', 2)	;relative coords to the client area of the active window
+	$pos = MouseGetPos()
+	$s &= "|" & $pos[0] & "x" & $pos[1]	; default 1
+
+	GUICtrlSetData($_gid_info[$id], $s)
+
+	Opt('MouseCoordMode', 1)	;(default) absolute screen coordinates
+
+EndFunc
