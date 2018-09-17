@@ -12,7 +12,7 @@ Global $__g_default_buff[5][4] = [ _
 		]
 
 ;GUICtrl Id: enable, time, twice
-Global $__gid_fishbuff[5][3], $__gid_fishbuff_toggle
+Global $__gid_fishbuff[5][3], $__gid_fishbuff_toggle, $__gid_timerdiff[5]
 
 
 ;_fishbuff_Main(50, 100)
@@ -41,17 +41,18 @@ Func _fishbuff_CreateCtrl($id, $ix, $iy)
 
 	;add time select
 	Local $t = $__g_default_buff[$id][2]
-	$__gid_fishbuff[$id][1] = GUICtrlCreateCombo("3 min", $ix + 50, $iy, 60)
+	$__gid_fishbuff[$id][1] = GUICtrlCreateCombo("3 min", $ix + 40, $iy, 60)
 	GUICtrlSetData($__gid_fishbuff[$id][1], "10 min|30 min", $t)
 
 	;if twice press
-	$__gid_fishbuff[$id][2] = GUICtrlCreateCheckbox("twice", $ix + 110, $iy)
+	$__gid_fishbuff[$id][2] = GUICtrlCreateCheckbox("双", $ix + 100, $iy)
 	If $__g_default_buff[$id][3] Then GUICtrlSetState(-1, $GUI_CHECKED)
+
+   $__gid_timerdiff[$id] = GUICtrlCreateProgress($ix+130,$iy,40)
 
 	;GUICtrlSetOnEvent($__gid_fishbuff[$id][0], "_fishbuff_UpdateBuff")
 	;GUICtrlSetOnEvent($__gid_fishbuff[$id][1], "_fishbuff_UpdateBuff")
 	;GUICtrlSetOnEvent($__gid_fishbuff[$id][2], "_fishbuff_UpdateBuff")
-
 EndFunc   ;==>_fishbuff_CreateCtrl
 
 Func _fishbuff_UpdateBuff()
@@ -64,7 +65,7 @@ Func _fishbuff_UpdateBuff()
 		Local $twice = 0
 		If GUICtrlRead($__gid_fishbuff[$i][2]) = $GUI_CHECKED Then $twice = 1
 
-		ConsoleWrite("Key:" & $key & ", enalbe=" & $enable & ", time=" & $time & ", twice=" & $twice & @CRLF)
+		;ConsoleWrite("Key:" & $key & ", enalbe=" & $enable & ", time=" & $time & ", twice=" & $twice & @CRLF)
 		$__g_fishbuff[$i][0] = $enable
 		$__g_fishbuff[$i][1] = $key
 		$__g_fishbuff[$i][2] = $time
@@ -95,13 +96,20 @@ Func _fishbuff_ToggleCtrlEnable()
 
 EndFunc   ;==>_fishbuff_ToggleCtrlEnable
 
-Func _fishbuff_IsTimeOut($id)
-	Local $timer = $__g_fishbuff[$id][2]
+Func _fishbuff_SetProgress($id,$ti,$td)
+   Local $percent = Int(100*$td/$ti)
+   GUICtrlSetData($__gid_timerdiff[$id],$percent)
+EndFunc
 
-	;timerinit
-	If Not $__g_fishbuff[$id][4] Then
-		Return 1
-	ElseIf TimerDiff($__g_fishbuff[$id][4]) >= $timer Then
+Func _fishbuff_IsTimeOut($id)
+   ;timerinit
+   If Not $__g_fishbuff[$id][4] Then Return 1
+
+   Local $timer = $__g_fishbuff[$id][2]
+   Local $tdiff = TimerDiff($__g_fishbuff[$id][4])
+   _fishbuff_SetProgress($id, $timer,$tdiff)
+
+   If $tdiff >= $timer Then
 		Return 1
 	Else
 		Return 0
@@ -112,6 +120,13 @@ Func _fishbuff_PressKey($id, $wait = 2000, $wait2 = 1000)
 	Local $key = $__g_fishbuff[$id][1]
 	Local $twice = $__g_fishbuff[$id][3]
 	ConsoleWrite("Press" & $key & " twice=" & $twice & @CRLF)
+	;put fishfork away
+	If $twice = 1 Then
+		Send("{LEFT down}")
+		Sleep (200)
+		Send("{LEFT up}")
+	EndIf
+
 	Send($key)
 	Sleep($wait)
 
@@ -119,6 +134,19 @@ Func _fishbuff_PressKey($id, $wait = 2000, $wait2 = 1000)
 		Send($key)
 		Sleep($wait2)
 	EndIf
+
+	;back to view
+	If $twice = 1 Then
+		Send("{RIGHT down}")
+		Sleep (200)
+		Send("{RIGHT up}")
+	EndIf
+
+	;avoid in water
+	Send("{SPACE}")
+	Sleep(100)
+	Send("{SPACE}")
+	Sleep(100)
 EndFunc   ;==>_fishbuff_PressKey
 
 Func _fishbuff_ResetTimer($id)
@@ -133,25 +161,6 @@ Func _fishbuff_TimerCheck()
 				_fishbuff_ResetTimer($i)
 			EndIf
 		EndIf
-	Next
+	 Next
+
 EndFunc   ;==>_fishbuff_TimerCheck
-
-#cs
-	fishbuff, enable add more buff for fishing
-	buff info:
-	key      2,3,4,5,6
-	enable   if the buff is valid
-	time     how often add buff (3/10/30minutes)
-	isTwice  press 2 time to make sure the buff work
-
-	A common fish buff:
-	(2) 3min drawf wine
-	(3) 10min panda fork, need press 2 to use it
-	(4) + need use fish pole
-	(5) 10min fish hat
-	(6) 30min big fish bubble
-#ce
-
-;GUICtrlSetState
-;$GUI_ENABLE (64) Control will be enabled.
-;$GUI_DISABLE (128) Control will be greyed out.
