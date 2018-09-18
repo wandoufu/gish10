@@ -67,9 +67,7 @@ Global $good = 0, $bad = 0
 _gish10()
 
 While 1
-
-	Sleep(100)
-
+	Sleep(1000)
 WEnd
 
 Func _gish10()
@@ -112,6 +110,7 @@ EndFunc   ;==>_fishrect_Create
 
 Func doFishing()
 	GUICtrlSetData($_gid_status, "启动钓鱼 ... ")
+	;fail control
 	$good = 0
 	$bad = 0
 
@@ -121,6 +120,12 @@ Func doFishing()
 	MouseClick("left")
 
 	While $running
+		;recently reset
+		If $good > 20 Then
+			$good = 0
+			$bad = 0
+		EndIf
+
 		;review/add fishbuff
 		GUICtrlSetData($_gid_status, "检查鱼饵...")
 		_fishbuff_TimerCheck()
@@ -128,6 +133,12 @@ Func doFishing()
 		GUICtrlSetData($_gid_status, "开始钓鱼 ... ")
 		scanPop2()
 
+		;when too many fail
+		If ($bad - $good) > 10 Then 
+			$running = 0
+			Send("{SPACE}")
+			Sleep(1000)
+		EndIf
 		GUICtrlSetData($b_start_stop, "GOOD:" & $good & " BAD:" & $bad)
 	WEnd
 EndFunc   ;==>doFishing
@@ -141,11 +152,10 @@ Func monitorPop()
 	WEnd
 
 	;Find dark red point
-	Local $first_color = findPixelAtMouse(0x602020, 50, 30, 1)
+	Local $first_color = findPixelAtMouse(0x602020, 50, 50, 30, 1)
 	If @error Then
 		$bad += 1
 		GUICtrlSetData($_gid_status, "寻找红点 - 失败")
-		Send("{SPACE}")
 		Return
 	EndIf
 
@@ -153,7 +163,7 @@ Func monitorPop()
 	GUICtrlSetData($_gid_status, "监视红点 ... ")
 	While (1)
 		Sleep(100)
-		Local $next_color = findPixelAtMouse($first_color, 5, 10) ;narrow search
+		Local $next_color = findPixelAtMouse($first_color, 10, 5, 10) ;narrow search
 		If @error Then
 			GUICtrlSetData($_gid_status, "监视红点 ... 消失，点击")
 			$good += 1
@@ -171,17 +181,20 @@ Func monitorPop()
 EndFunc   ;==>monitorPop
 
 
-Func findPixelAtMouse($color, $range = 50, $shade = 30, $move = 0)
+Func findPixelAtMouse($color, $width = 50, $height = 50, $shade = 30, $move = 0)
 	Local $pos = MouseGetPos()
-	Local $x1 = $pos[0] - $range
-	Local $y1 = $pos[1] - $range
-	Local $x2 = $pos[0] + $range
-	Local $y2 = $pos[1] + $range
+	Local $x1 = $pos[0] - $width
+	Local $x2 = $pos[0] + $width
+	Local $y1 = $pos[1] - $height
+	Local $y2 = $pos[1] + $height
+	If $x1 < 0 Then $x1 = 0
+	If $y1 < 0 Then $y1 = 0
 
 	Local $pop_pos = PixelSearch($x1, $y1, $x2, $y2, $color, $shade)
 	If Not @error Then
 		Local $color2 = PixelGetColor($pop_pos[0], $pop_pos[1])
-		ToolTip("found " & Hex($color, 6) & @CRLF & Hex($color2, 6) & " " & $pop_pos[0] & "x" & $pop_pos[1], 0, 0)
+		Local $distance = Abs($pos[0] - $pop_pos[0]) + Abs($pos[1] - $pop_pos[1])
+		ToolTip("found " & Hex($color, 6) & " " & $distance & @CRLF & Hex($color2, 6) & " " & $pop_pos[0] & "x" & $pop_pos[1], 0, 0)
 		If $move = 1 Then MouseMove($pop_pos[0], $pop_pos[1])
 		Return $color2
 	Else
@@ -301,5 +314,6 @@ EndFunc   ;==>escGetPos
 
 
 Func guiClose()
+	GUIDelete()
 	Exit
 EndFunc   ;==>guiClose

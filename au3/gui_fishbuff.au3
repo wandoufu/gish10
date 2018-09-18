@@ -123,8 +123,13 @@ Func _fishbuff_PressKey($id, $wait = 2000, $wait2 = 1000)
 	;put fishfork away
 	If $twice = 1 Then
 		Send("{LEFT down}")
-		Sleep (200)
+		Sleep (500)
 		Send("{LEFT up}")
+		Sleep (500)
+		Send("{LEFT down}")
+		Sleep (500)
+		Send("{LEFT up}")
+		Sleep (500)
 	EndIf
 
 	Send($key)
@@ -138,15 +143,22 @@ Func _fishbuff_PressKey($id, $wait = 2000, $wait2 = 1000)
 	;back to view
 	If $twice = 1 Then
 		Send("{RIGHT down}")
-		Sleep (200)
+		Sleep (500)
 		Send("{RIGHT up}")
+		Sleep (500)
+		Send("{RIGHT down}")
+		Sleep (500)
+		Send("{RIGHT up}")
+		Sleep (500)
 	EndIf
 
-	;avoid in water
-	Send("{SPACE}")
-	Sleep(100)
-	Send("{SPACE}")
-	Sleep(100)
+	If $twice = 1 Then
+		;avoid in water
+		Send("{SPACE}")
+		Sleep(500)
+		Send("{SPACE}")
+		Sleep(500)
+	EndIf
 EndFunc   ;==>_fishbuff_PressKey
 
 Func _fishbuff_ResetTimer($id)
