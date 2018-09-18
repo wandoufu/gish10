@@ -1,91 +1,32 @@
-ANWU AU3 code
+My AU3 code
 =========
 
-wow bot review
-----
-2018-09-14 11:07:12
-人是玩不动了，这个月来，消耗太大了，人到中年，肝魔兽这种事，说起来都是眼泪。
-放弃是不可能的，这辈子都不可能，超喜欢的呀。
+gish10
+---
+2018-09-18 16:32:38
 
-编程是不会的，什么语言都是皮毛，做外挂还是autoit比较习惯，
-几个星期查看autio新版本，发现增加了相当多的UDF，
-大部分是针对几个常用的DLL（user32,gdi,kenerl）扩展开发，
-真是不错。
-
-那么开始吧，行动起来，工作也没什么进展，
-可以稍微娱乐一下。
-
-# 基础
-程序本身，分析需求，实现。
-
-# 配置文件
-配置文件总是很重要的，当前期有个基础
-
-## 数据结构
-我们知道，好的数据结构能够事半功倍，反之亦然。
-那么怎么才能算是好的呢？
-
-或许类似公司组织管理，公司的员工，制度，还有目标等等。
-
-下面是关于帐号的配置
-主体是人
-* 帐号
-   * 密码
-   * 人物 
-      * 名字（没什么作用，现在没办法交互）
-      * 位置（index）
-         * 大区，固定的tab和位置
-         * 服务器位置，看起来是按人数上下，给1，2，3，4
-         * 列表位置，用户定制的，给1，2，3，4
-      * 工作（his task）
-         * 每日一搓（链接，裁缝，附魔，工程，铁匠）
-         * 德拉诺随从安排（master plan）
-         * 拍卖（奸商定时上下）
-         * 钓鱼（没事了就上去钓会儿鱼吧）
-         * 刷怪（不知道今生有没有希望）
-
-固定常数
+refine files
 
 
+git usage
+---
+2018-09-18 15:47:30
 
+* Get a new branch
+   * clone a git repo
+      *  git clone 
+   -l    local
+   .     .git
+   my.git   target
 
+   * into new git dir
+      * cd my.git
 
+   * create a new branch and check out
+      * git checkout -b my.v0.1 v0.1
 
+* add remote
+   * git remote add gish10 url
 
-
-
-
-
-
-thinking about dynamic mods and their handle
-------
-2018-09-13
-
-## prefix for variable
-If there is a need to use Eval() to read a variable,
-then in most situations Assign() should be used to create/write to the variable
-and IsDeclared() should be used to check that the variable exists.
-
-
-2018-09-14 10:03:01
-
-模块化，可复用的‘插件’,设计要求之一：
-
-* 子模块，内部包含全局变量，include进去就可以使用
-
-* 如果有多个相同子模块，如何操作？值得思考。
-前面想过，对于全局的控件句柄变量，加prefix（前缀），这样可以得到不同的控件。
-虽然麻烦，变量还是可以区分开。
-* 那么函数呢？相同的事件函数，怎么判断是哪个控件产生的驱动，
-怎么去执行什么？没有self，this，parent
-
-
-显然，这样使用看起来很不友好。
-全局控件想法很好，需要持续思考
-
-Tips
-====
-* 中文输入啊可以了
-* 中文输入和VIM设置可能有些问题吧，需要经常切换。
-* 还好，刚才还以为不能输入呢。
-
+* push
+   * git push gish10
